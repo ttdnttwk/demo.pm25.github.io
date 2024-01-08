@@ -1,7 +1,6 @@
 // Connect to MQTT broker and subscribe to the PM 2.5 topic
-<script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
+src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript";
 
-<script>
 
 client = new Paho.MQTT.Client(location.hostname, Number(location.port), "clientId");
 
@@ -57,4 +56,4 @@ mqttClient.onMessageArrived = function (message) {
   document.getElementById("explanation").innerText = explanation;
 };
 
-</script>
+
