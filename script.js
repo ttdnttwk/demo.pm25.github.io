@@ -1,5 +1,5 @@
 // Connect to MQTT broker and subscribe to the PM 2.5 topic
-src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript";
+src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.js";
 
 
 client = new Paho.MQTT.Client("broker.mqttdashboard.com", Number(8000), "clientId_MQTTPM25");
