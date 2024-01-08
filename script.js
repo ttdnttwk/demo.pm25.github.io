@@ -2,7 +2,7 @@
 src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript";
 
 
-client = new Paho.MQTT.Client(location.hostname, Number(location.port), "clientId");
+client = new Paho.MQTT.Client("broker.mqttdashboard.com", Number(8000), "clientId_MQTTPM25");
 
 // set callback handlers
 client.onConnectionLost = onConnectionLost;
