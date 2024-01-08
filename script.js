@@ -1,66 +1,60 @@
-const app = document.getElementById('app');
+// Connect to MQTT broker and subscribe to the PM 2.5 topic
+<script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
 
-fetch('www.abcd.com/api')
-  .then(response => response.json())
-  .then(data => {
-    if (data.status === 'ok') {
-      const aqiData = data.data;
+<script>
 
-      // Display AQI data
-      const aqiContainer = document.createElement('div');
-      aqiContainer.classList.add('data-container');
+client = new Paho.MQTT.Client(location.hostname, Number(location.port), "clientId");
 
-      const aqiLabel = document.createElement('span');
-      aqiLabel.classList.add('data-label');
-      aqiLabel.textContent = 'AQI:';
+// set callback handlers
+client.onConnectionLost = onConnectionLost;
+client.onMessageArrived = onMessageArrived;
 
-      const aqiValue = document.createElement('span');
-      aqiValue.classList.add('data-value');
-      aqiValue.textContent = aqiData.aqi;
+// connect the client
+client.connect({onSuccess:onConnect});
 
-      aqiContainer.appendChild(aqiLabel);
-      aqiContainer.appendChild(aqiValue);
-      app.appendChild(aqiContainer);
 
-      // Display city information
-      const cityContainer = document.createElement('div');
-      cityContainer.classList.add('data-container');
+// called when the client connects
+function onConnect() {
+  // Once a connection has been made, make a subscription and send a message.
+  console.log("onConnect");
+  client.subscribe("World");
+  message = new Paho.MQTT.Message("Hello");
+  message.destinationName = "World";
+  client.send(message);
+}
 
-      const cityLabel = document.createElement('span');
-      cityLabel.classList.add('data-label');
-      cityLabel.textContent = 'City:';
+// called when the client loses its connection
+function onConnectionLost(responseObject) {
+  if (responseObject.errorCode !== 0) {
+    console.log("onConnectionLost:"+responseObject.errorMessage);
+  }
+}
+  
+mqttClient.onMessageArrived = function (message) {
+  const data = JSON.parse(message.payloadString);
 
-      const cityValue = document.createElement('span');
-      cityValue.classList.add('data-value');
-      cityValue.textContent = aqiData.city.name;
+  // Assuming data format: { pm25: value }
+  const pm25Value = data.pm25;
+  document.getElementById("pm25-level").innerText = pm25Value;
 
-      cityContainer.appendChild(cityLabel);
-      cityContainer.appendChild(cityValue);
-      app.appendChild(cityContainer);
+  // Perform logic to determine status and set explanation based on USAQI standards
+  let status = "";
+  let explanation = "";
 
-      // Display dominant pollutant
-      const dominantPollutantContainer = document.createElement('div');
-      dominantPollutantContainer.classList.add('data-container');
+  // Example logic - please replace with your own USAQI standards logic
+  if (pm25Value <= 50) {
+    status = "Good";
+    explanation = "Air quality is considered satisfactory, and air pollution poses little or no risk.";
+  } else if (pm25Value <= 100) {
+    status = "Moderate";
+    explanation = "Air quality is acceptable; however, there may be a moderate health concern for a very small number of people who are unusually sensitive to air pollution.";
+  } else {
+    status = "Unhealthy";
+    explanation = "Everyone may begin to experience health effects; members of sensitive groups may experience more serious health effects.";
+  }
 
-      const dominantPollutantLabel = document.createElement('span');
-      dominantPollutantLabel.classList.add('data-label');
-      dominantPollutantLabel.textContent = 'Dominant pollutant:';
+  document.getElementById("status").innerText = status;
+  document.getElementById("explanation").innerText = explanation;
+};
 
-      const dominantPollutantValue = document.createElement('span');
-      dominantPollutantValue.classList.add('data-value');
-      dominantPollutantValue.textContent = aqiData.dominantpol;
-
-      dominantPollutantContainer.appendChild(dominantPollutantLabel);
-      dominantPollutantContainer.appendChild(dominantPollutantValue);
-      app.appendChild(dominantPollutantContainer);
-    } else {
-      const errorContainer = document.createElement('div');
-      errorContainer.classList.add('data-container');
-
-      const errorMessage = document.createElement('span');
-      errorMessage.textContent = 'Error retrieving AQI data.';
-
-      errorContainer.appendChild(errorMessage);
-      app.appendChild(errorContainer);
-    }
-  });
+</script>
