@@ -13,10 +13,8 @@ client.connect({onSuccess:onConnect});
 function onConnect() {
   // Once a connection has been made, make a subscription and send a message.
   console.log("onConnect");
-  client.subscribe("World");
-  message = new Paho.MQTT.Message("Hello");
-  message.destinationName = "World";
-  client.send(message);
+  client.subscribe("TTDN/MQTT/PM25");
+  document.getElementById("status").innerText = 'HELLO';
 }
 
 // called when the client loses its connection
@@ -26,8 +24,9 @@ function onConnectionLost(responseObject) {
   }
 }
   
-mqttClient.onMessageArrived = function (message) {
+function onMessageArrived(message) {
   const data = JSON.parse(message.payloadString);
+  console.log(data);
 
   // Assuming data format: { pm25: value }
   const pm25Value = data.pm25;
